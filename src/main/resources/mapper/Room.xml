@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="RoomMapper">
+
+  <select id="roomCheck" parameterType="string" resultType="roomDTO">
+  	select * from room where roomName = #{roomName}
+  </select>
+  
+  <insert id="roomInsert" parameterType="roomDTO">
+  	insert into room(roomName,capacity,location)
+  	values (#{roomName},#{capacity},#{location})
+  </insert>
+  
+   <select id="selectRoom" parameterType="map" resultType="string">
+    SELECT rm.roomName
+    FROM room rm
+    WHERE rm.roomNo NOT IN (
+        SELECT r.roomNo
+        FROM reservation r
+        WHERE NOT (
+            r.endTime &lt;= TO_TIMESTAMP(#{start}, 'YYYY-MM-DD HH24:MI:SS')
+            OR r.startTime &gt;= TO_TIMESTAMP(#{end}, 'YYYY-MM-DD HH24:MI:SS')
+        )
+    )
+</select>
+
+
+
+</mapper>

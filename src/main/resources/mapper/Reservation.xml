@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ReservationMapper">
+  
+	<select id="resSearch" resultType="reservationTimeDTO">
+    SELECT rm.roomName,
+           TO_CHAR(r.startTime, 'HH24:MI:SS') AS startTime,
+           TO_CHAR(r.endTime, 'HH24:MI:SS')   AS endTime,
+           r.situation
+    FROM reservation r join room rm on r.roomNo = rm.roomNo
+    WHERE r.startTime::date = TO_DATE(#{dateStr}, 'YYYY-MM-DD')
+    ORDER BY r.startTime;
+</select>
+
+
+	<delete id="deleteRes" parameterType="map">
+	    DELETE FROM reservation
+	    WHERE starttime = TO_TIMESTAMP(#{start}, 'YYYY-MM-DD HH24:MI:SS')
+	      AND endtime   = TO_TIMESTAMP(#{end}, 'YYYY-MM-DD HH24:MI:SS');
+	</delete>
+    
+    <insert id="intRes" parameterType="map" >
+	   INSERT INTO reservation (memNo, roomNo, startTime, endTime, situation)
+    	VALUES (
+        #{memNo},
+        #{roomNo},
+        TO_TIMESTAMP(#{start}, 'YYYY-MM-DD HH24:MI:SS'),
+        TO_TIMESTAMP(#{end}, 'YYYY-MM-DD HH24:MI:SS'),
+        #{situation}
+    )
+	</insert>
+    
+</mapper>
